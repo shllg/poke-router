@@ -11,3 +11,5 @@ module.exports =
     file: 'mapstogpx20160715_221215'
   'tropical-island':
     file: 'mapstogpx20160717_091914'
+  'friedhof-friedrichshain':
+    file: 'mapstogpx20160717_141558'
