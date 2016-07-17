@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+
+'use strict';
+
+process.title = 'script';
+
+// Especially badass external libs.
+var findup  = require('findup-sync');
+var resolve = require('resolve').sync;
+var path    = require('path');
+
+// Internal libs.
+var options     = require('../lib/cli/cli').options;
+var completion  = require('../lib/cli/completion');
+var info        = require('../lib/cli/info');
+
+// paths
+var basedir = process.cwd();
+var mainPath;
+
+// Do stuff based on CLI options.
+if ('completion' in options) {
+  completion.print(options.completion);
+} else if (options.version) {
+  info.version();
+} else if (options.base) {
+  basedir = path.resolve(options.base);
+}
+
+try {
+  mainPath = resolve('lib/main', { basedir: basedir });
+} catch (ex) {
+  mainPath = findup('lib/main.js');
+  // No script install found!
+  if (!mainPath) {
+    if (options.version) { process.exit(); }
+    if (options.help) { info.help(); }
+    info.fatal('Unable to find local script.', 99);
+  }
+}
+
+// Everything looks good. Require local script and run it.
+require(mainPath).run();
